@@ -14,4 +14,25 @@ urlpatterns = [
         todo_views.DeleteCardView.as_view(),
         name="delete-card",
     ),
+    path(
+        "<int:card_id>/todo-item/",
+        todo_views.CreateTodoItemView.as_view(),
+        name="todo-item",
+    ),
+    path("todo-items/", todo_views.TodoItemView.as_view(), name="todo-items"),
+    path(
+        "<int:todo_id>/delete-todo/",
+        todo_views.DeleteTodoView.as_view(),
+        name="delete-todo",
+    ),
+    path(
+        "<int:todo_id>/update-todo/",
+        todo_views.UpdateTodoView.as_view(),
+        name="delete-todo",
+    ),
+    path(
+        "<int:todo_id>/complete-todo/",
+        todo_views.DoneTodoView.as_view(),
+        name="complete-todo",
+    ),
 ]
