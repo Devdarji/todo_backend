@@ -90,3 +90,116 @@ class DeleteCardView(APIView):
             data=[card_item.get_card_details() for card_item in all_card_instance],
             code=200,
         )
+
+
+class CreateTodoItemView(APIView):
+    @staticmethod
+    def post(request, card_id):
+        card_instance = todo_models.CardItem.objects.filter(
+            id=card_id, is_active=True
+        ).last()
+
+        if not card_instance:
+            return todo_utils.create_response("Not Found", code=400)
+
+        serializer_instance = todo_serializers.TaskItemSerializer(data=request.data)
+
+        if not serializer_instance.is_valid():
+            return todo_utils.create_response(serializer_instance.errors, code=400)
+
+        task_item_instance = todo_models.TaskItem.objects.create(
+            **serializer_instance.validated_data
+        )
+
+        task_item_instance.card = card_instance
+
+        task_item_instance.save(update_fields=["card"])
+
+        return todo_utils.create_response(
+            data=task_item_instance.get_task_details(), code=200
+        )
+
+
+class TodoItemView(APIView):
+    @staticmethod
+    def get(request):
+        todo_item_instances = todo_models.TaskItem.objects.all()
+
+        return todo_utils.create_response(
+            data=[todo_item.get_task_details() for todo_item in todo_item_instances],
+            code=200,
+        )
+
+
+class DeleteTodoView(APIView):
+    @staticmethod
+    def delete(request, todo_id):
+        current_time = timezone.now()
+        todo_item_instance = todo_models.TaskItem.objects.filter(id=todo_id).last()
+
+        if not todo_item_instance:
+            return todo_utils.create_response(data="Not Found", code=400)
+
+        todo_item_instance.is_active = False
+        todo_item_instance.updated_date_time = current_time
+
+        todo_item_instance.save(update_fields=["is_active", "updated_date_time"])
+
+        return todo_utils.create_response(data="Ok", code=200)
+
+
+class UpdateTodoView(APIView):
+    @staticmethod
+    def put(request, todo_id):
+        current_time = timezone.now()
+        todo_item_instance = todo_models.TaskItem.objects.filter(
+            id=todo_id, is_active=True
+        ).last()
+
+        if not todo_item_instance:
+            return todo_utils.create_response(data="Not Found", code=400)
+
+        serializer_instance = todo_serializers.TaskItemSerializer(data=request.data)
+
+        if not serializer_instance.is_valid():
+            return todo_utils.create_response(serializer_instance.errors, code=400)
+
+        if serializer_instance.validated_data.get("title"):
+            todo_item_instance.title = serializer_instance.validated_data.get("title")
+
+        todo_item_instance.updated_date_time = current_time
+
+        todo_item_instance.save(update_fields=["title", "updated_date_time"])
+
+        return todo_utils.create_response(
+            data=todo_item_instance.get_task_details(), code=200
+        )
+
+
+class DoneTodoView(APIView):
+    @staticmethod
+    def post(request, todo_id):
+        current_time = timezone.now()
+        todo_item_instance = todo_models.TaskItem.objects.filter(
+            id=todo_id, is_active=True
+        ).last()
+
+        if not todo_item_instance:
+            return todo_utils.create_response(data="Not Found", code=400)
+
+        serializer_instance = todo_serializers.DoneTaskSerializer(data=request.data)
+
+        if not serializer_instance.is_valid():
+            return todo_utils.create_response(serializer_instance.errors, code=400)
+
+        todo_item_instance.is_pending = serializer_instance.validated_data.get(
+            "is_pending"
+        )
+
+        todo_item_instance.updated_date_time = current_time
+
+        todo_item_instance.save(update_fields=["is_pending", "updated_date_time"])
+
+        return todo_utils.create_response(
+            data=todo_item_instance.get_task_details(), code=200
+        )
