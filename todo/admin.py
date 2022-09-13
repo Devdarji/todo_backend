@@ -12,6 +12,7 @@ class CardItemAdmin(admin.ModelAdmin):
 class TaskItemAdmin(admin.ModelAdmin):
     list_display = [
         "title",
+        "card",
         "created_date_time",
         "updated_date_time",
         "is_pending",
