@@ -9,11 +9,14 @@ class CardItem(models.Model):
     is_active = models.BooleanField(default=True)
 
     def get_card_details(self):
-        return {
-            "card_name": self.card_name,
-            "created_date_time": self.created_date_time,
-            "updated_date_time": self.updated_date_time,
-        }
+        task_instances = self.card_item.filter(is_active=True).last()
+        if task_instances:
+            return {
+                "card_name": self.card_name,
+                "title": task_instances.title if task_instances.title else "NA",
+                "created_date_time": self.created_date_time,
+                "updated_date_time": self.updated_date_time,
+            }
 
 
 class TaskItem(models.Model):
