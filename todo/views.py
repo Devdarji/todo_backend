@@ -29,7 +29,8 @@ class CreateCardView(APIView):
         if not serializer_instance.is_valid():
             return todo_utils.create_response(serializer_instance.errors, 400)
 
-        todo_models.CardItem.objects.create(**serializer_instance.validated_data)
+        if not serializer_instance.validated_data.get("task_instance"):
+            todo_models.CardItem.objects.create(**serializer_instance.validated_data)
 
         return todo_utils.create_response(
             data=[card_item.get_card_details() for card_item in all_card_instance],
@@ -111,12 +112,10 @@ class CreateTodoItemView(APIView):
             **serializer_instance.validated_data
         )
 
-        task_item_instance.card = card_instance
-
-        task_item_instance.save(update_fields=["card"])
+        card_instance.task.add(task_item_instance)
 
         return todo_utils.create_response(
-            data=task_item_instance.get_task_details(), code=200
+            data=card_instance.get_card_details(), code=200
         )
 
 
