@@ -30,7 +30,12 @@ class CardItem(models.Model):
     def get_card_details(self):
         return {
             "card_name": self.card_name,
-            "title": [item.title for item in self.task.all()] if self.task else "NA",
+            "title": [
+                {"title": item.title, "is_pending": item.is_pending}
+                for item in self.task.filter(is_active=True)
+            ]
+            if self.task
+            else "NA",
             "created_date_time": self.created_date_time,
             "updated_date_time": self.updated_date_time,
         }

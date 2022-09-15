@@ -19,7 +19,6 @@ urlpatterns = [
         todo_views.CreateTodoItemView.as_view(),
         name="todo-item",
     ),
-    path("todo-items/", todo_views.TodoItemView.as_view(), name="todo-items"),
     path(
         "<int:todo_id>/delete-todo/",
         todo_views.DeleteTodoView.as_view(),
