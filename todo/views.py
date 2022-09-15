@@ -8,6 +8,7 @@ from todo import serializers as todo_serializers
 from todo import models as todo_models
 
 
+# Done
 class GetCardItemView(APIView):
     @staticmethod
     def get(request):
@@ -19,6 +20,7 @@ class GetCardItemView(APIView):
         )
 
 
+# Done
 class CreateCardView(APIView):
     @staticmethod
     def post(request):
@@ -93,6 +95,7 @@ class DeleteCardView(APIView):
         )
 
 
+# Done
 class CreateTodoItemView(APIView):
     @staticmethod
     def post(request, card_id):
@@ -119,17 +122,7 @@ class CreateTodoItemView(APIView):
         )
 
 
-class TodoItemView(APIView):
-    @staticmethod
-    def get(request):
-        todo_item_instances = todo_models.TaskItem.objects.all()
-
-        return todo_utils.create_response(
-            data=[todo_item.get_task_details() for todo_item in todo_item_instances],
-            code=200,
-        )
-
-
+# Done
 class DeleteTodoView(APIView):
     @staticmethod
     def delete(request, todo_id):
@@ -147,6 +140,7 @@ class DeleteTodoView(APIView):
         return todo_utils.create_response(data="Ok", code=200)
 
 
+# Done
 class UpdateTodoView(APIView):
     @staticmethod
     def put(request, todo_id):
