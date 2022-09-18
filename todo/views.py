@@ -77,8 +77,6 @@ class DeleteCardView(APIView):
     def delete(request, card_id):
         current_time = timezone.now()
 
-        all_card_instance = todo_models.CardItem.objects.filter(is_active=True)
-
         card_instance = todo_models.CardItem.objects.filter(id=card_id).last()
 
         if not card_instance:
@@ -88,6 +86,8 @@ class DeleteCardView(APIView):
         card_instance.updated_date_time = current_time
 
         card_instance.save(update_fields=["is_active", "updated_date_time"])
+
+        all_card_instance = todo_models.CardItem.objects.filter(is_active=True)
 
         return todo_utils.create_response(
             data=[card_item.get_card_details() for card_item in all_card_instance],
