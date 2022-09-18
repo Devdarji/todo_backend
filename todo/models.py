@@ -29,6 +29,7 @@ class CardItem(models.Model):
 
     def get_card_details(self):
         return {
+            "id": self.id,
             "card_name": self.card_name,
             "title": [
                 {"title": item.title, "is_pending": item.is_pending}
