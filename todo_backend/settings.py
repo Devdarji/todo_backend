@@ -51,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "todo_backend.middleware.SetCSRF",
 ]
 
 ROOT_URLCONF = "todo_backend.urls"

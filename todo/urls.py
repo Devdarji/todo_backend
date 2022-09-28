@@ -14,10 +14,10 @@ urlpatterns = [
         todo_views.DeleteCardView.as_view(),
         name="delete-card",
     ),
+    # Todo API
+    path("todo-items/", todo_views.TodoItemView.as_view(), name="todo-item"),
     path(
-        "<int:card_id>/todo-item/",
-        todo_views.CreateTodoItemView.as_view(),
-        name="todo-item",
+        "create-todo-item/", todo_views.CreateTodoItemView.as_view(), name="todo-item"
     ),
     path(
         "<int:todo_id>/delete-todo/",
