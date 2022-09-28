@@ -13,11 +13,15 @@ class TaskItem(models.Model):
 
     def get_task_details(self):
         return {
+            "id": self.id,
             "title": self.title,
             "created_date_time": self.created_date_time,
             "updated_date_time": self.updated_date_time,
             "is_pending": self.is_pending,
         }
+
+    class Meta:
+        ordering = ("-id",)
 
 
 class CardItem(models.Model):

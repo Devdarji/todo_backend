@@ -95,30 +95,38 @@ class DeleteCardView(APIView):
         )
 
 
+class TodoItemView(APIView):
+    @staticmethod
+    def get(request):
+        todo_instances = todo_models.TaskItem.objects.filter(is_active=True)
+        return todo_utils.create_response(
+            data=[todo.get_task_details() for todo in todo_instances], code=200
+        )
+
+
 # Done
 class CreateTodoItemView(APIView):
     @staticmethod
-    def post(request, card_id):
-        card_instance = todo_models.CardItem.objects.filter(
-            id=card_id, is_active=True
-        ).last()
+    def post(request):
+        # card_instance = todo_models.CardItem.objects.filter(
+        #     id=card_id, is_active=True
+        # ).last()
 
-        if not card_instance:
-            return todo_utils.create_response("Not Found", code=400)
+        # if not card_instance:
+        #     return todo_utils.create_response("Not Found", code=400)
 
         serializer_instance = todo_serializers.TaskItemSerializer(data=request.data)
 
         if not serializer_instance.is_valid():
             return todo_utils.create_response(serializer_instance.errors, code=400)
 
-        task_item_instance = todo_models.TaskItem.objects.create(
-            **serializer_instance.validated_data
-        )
+        if serializer_instance.validated_data.get("title"):
+            todo_models.TaskItem.objects.create(**serializer_instance.validated_data)
 
-        card_instance.task.add(task_item_instance)
+        todo_instances = todo_models.TaskItem.objects.filter(is_active=True)
 
         return todo_utils.create_response(
-            data=card_instance.get_card_details(), code=200
+            data=[todo.get_task_details() for todo in todo_instances], code=200
         )
 
 
@@ -164,8 +172,10 @@ class UpdateTodoView(APIView):
 
         todo_item_instance.save(update_fields=["title", "updated_date_time"])
 
+        todo_instances = todo_models.TaskItem.objects.filter(is_active=True)
+
         return todo_utils.create_response(
-            data=todo_item_instance.get_task_details(), code=200
+            data=[todo.get_task_details() for todo in todo_instances], code=200
         )
 
 
@@ -193,6 +203,8 @@ class DoneTodoView(APIView):
 
         todo_item_instance.save(update_fields=["is_pending", "updated_date_time"])
 
+        todo_instances = todo_models.TaskItem.objects.filter(is_active=True)
+
         return todo_utils.create_response(
-            data=todo_item_instance.get_task_details(), code=200
+            data=[todo.get_task_details() for todo in todo_instances], code=200
         )
